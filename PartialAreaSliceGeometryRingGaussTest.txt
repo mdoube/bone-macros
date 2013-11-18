@@ -1,0 +1,23 @@
+newImage("synthetic", "16-bit black", 256, 256, 6);
+for(s = 1; s <= nSlices(); s++){
+run("Specify...", "width=128 height=128 x=128 y=128 slice="+s+" oval centered");
+setColor(4096);
+fill();
+run("Specify...", "width=100 height=100 x=128 y=128 slice="+s+" oval centered");
+setColor(0);
+fill();
+setSlice(s);
+run("Select None");
+if (s > 1){
+run("Gaussian Blur...", "sigma="+(2*s-1)+" slice");
+}
+setMinAndMax(0, 4096);
+}
+run("Duplicate...", "title=synthetic-1 duplicate range=1-6");
+run("Scale...", "x=0.5 y=0.5 z=1.0 width=128 height=128 depth=6 interpolation=None process title=synthetic-2");
+selectWindow("synthetic");
+run("Duplicate...", "title=synthetic-2 duplicate range=1-6");
+run("Scale...", "x=0.25 y=0.25 z=1.0 width=64 height=64 depth=6 interpolation=None process title=synthetic-3");
+run("Concatenate...", "  title=gauss_downsample_test_image image1=synthetic image2=synthetic-1 image3=synthetic-2 image4=[-- None --]");
+run("Slice Geometry", "bone=unknown process_stack clear_results bone_min=1460 bone_max=4096 slope=0.0000 y_intercept=1.8000 background=1460 foreground=4096");
+run("Slice Geometry", "bone=unknown process_stack bone_min=1 bone_max=4096 slope=0.0000 y_intercept=1.8000 partial_volume_compensation background=0 foreground=4096");
